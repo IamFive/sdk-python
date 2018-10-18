@@ -59,3 +59,4 @@ examples/sample2.py
 examples/sample3.py
 examples/test
 .history/
+.noseids
