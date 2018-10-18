@@ -187,3 +187,14 @@ class Proxy(proxy2.BaseProxy):
         :returns: ``None``
         """
         self._delete(_volume.Volume, volume, ignore_missing=ignore_missing)
+
+    def os_quota_set(self, tenant_id):
+        """Querying details of tenant quotas
+
+        :param tenant_id: tenant id
+
+        :returns: the details of tenant quotas
+        :rtype: :class:`~openstack.evs.v2.volume.QuotaSet`
+        """
+
+        return self._get(_volume.QuotaSet, None, False, tenant_id=tenant_id)
