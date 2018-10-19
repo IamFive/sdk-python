@@ -194,7 +194,7 @@ class Proxy(proxy2.BaseProxy):
         :param tenant_id: tenant id
 
         :returns: the details of tenant quotas
-        :rtype: :class:`~openstack.evs.v2.volume.QuotaSet`
+        :rtype: :class:`~openstack.block_store.v2.volume.QuotaSet`
         """
 
         return self._get(_volume.QuotaSet, None, False, tenant_id=tenant_id)
