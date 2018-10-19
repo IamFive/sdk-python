@@ -198,3 +198,64 @@ class Proxy(proxy2.BaseProxy):
         """
 
         return self._get(_volume.QuotaSet, None, False, tenant_id=tenant_id)
+
+    def create_metadata(self, volume, **metadata):
+        """Adding metadata of an EVS disk
+
+        :param volume: The value can be the ID of a volume
+                       or a :class:`~openstack.block_store.v2.volume.VolumeMetadata`
+                       instance.
+        :param dict metadata: Keyword arguments which will be used to create
+                           a :class:`~openstack.block_store.v2.volume.VolumeMetadata`,
+                           comprised of the properties on the VolumeMetadata
+                           class.
+
+        :returns: the metadata of an EVS disk
+        :rtype: :class:`~openstack.blcok_store.v2.volume.VolumeMetadata`
+        """
+        res = self._get_resource(_volume.Volume, volume)
+        res_metadata = self._get_resource(_volume.VolumeMetadata, metadata)
+        return res_metadata.create_metadata(self._session, res.id, metadata)
+
+    def update_metadata(self, volume, key=None, **metadata):
+        """Updating metadata of an EVS disk
+
+        :param volume: The value can be the ID of a volume
+                       or a :class:`~openstack.block_store.v2.volume.VolumeMetadata`
+                       instance.
+        :param key: The key of metadata that requires the update.
+        :param dict metadata: Keyword arguments which will be used to create
+                           a :class:`~openstack.block_store.v2.volume.VolumeMetadata`,
+                           comprised of the properties on the VolumeMetadata
+                           class.
+
+        :returns: the metadata of an EVS disk
+        :rtype: :class:`~openstack.blcok_store.v2.volume.VolumeMetadata`
+        """
+        res = self._get_resource(_volume.Volume, volume)
+        res_metadata = self._get_resource(_volume.VolumeMetadata, metadata)
+        return res_metadata.update_metadata(self._session, res.id, metadata, key)
+
+    def delete_metadata(self, volume, key):
+        """Deleting one piece of EVS disk metadata
+
+        :param volume: The value can be the ID of a volume
+                       or a :class:`~openstack.block_store.v2.volume.VolumeMetadata`
+                       instance.
+        :param key: The key of the metadata that requires the deletion.
+        """
+        res = self._get_resource(_volume.Volume, volume)
+        metadata = self._get_resource(_volume.VolumeMetadata, {})
+        metadata.delete_metadata(self._session, res.id, key)
+
+    def get_metadata(self, volume, key=None):
+        """Querying EVS disk metadata
+
+        :param volume: The value can be the ID of a volume
+                       or a :class:`~openstack.block_store.v2.volume.VolumeMetadata`
+                       instance.
+        :param key: The key of the metadata to be queried.
+        """
+        res = self._get_resource(_volume.Volume, volume)
+        metadata = self._get_resource(_volume.VolumeMetadata, {})
+        return metadata.get_metadata(self._session, res.id, key)

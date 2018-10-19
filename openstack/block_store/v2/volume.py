@@ -13,6 +13,7 @@
 from openstack.block_store import block_store_service
 from openstack import format
 from openstack import resource2
+from openstack import utils
 
 
 class Volume(resource2.Resource):
@@ -169,3 +170,67 @@ class QuotaSet(resource2.Resource):
     backups = resource2.Body('backups', type=dict)
     #: The backup size (GB)
     backup_gigabytes = resource2.Body('backup_gigabytes', type=dict)
+
+
+class VolumeMetadata(resource2.Resource):
+    base_path = '/volumes'
+    service = block_store_service.BlockStoreService()
+
+    # capabilities
+    allow_get = True
+    allow_update = True
+    allow_delete = True
+
+    # properties
+    #: EVS disk metadata
+    meta = resource2.Body('meta', type=dict)
+    metadata = resource2.Body('metadata', type=dict)
+
+    def _operate_metadata(self, method, url, has_body=True, **kwargs):
+        request = self._prepare_request(requires_id=False)
+        request.uri = url
+        endpoint_override = self.service.get_endpoint_override()
+        response = method(request.uri,
+                          endpoint_filter=self.service,
+                          endpoint_override=endpoint_override,
+                          **kwargs)
+        self._translate_response(response, has_body)
+        return self
+
+    def create_metadata(self, session, volume_id, metadata):
+        url = utils.urljoin(self.base_path, volume_id, 'metadata')
+        d = {
+            'json': metadata,
+            'headers': {},
+        }
+        return self._operate_metadata(session.post, url, **d)
+
+    def update_metadata(self, session, volume_id, metadata, key=None):
+        if key:
+            url = utils.urljoin(self.base_path, volume_id, 'metadata', key)
+        else:
+            url = utils.urljoin(self.base_path, volume_id, 'metadata')
+        if key and metadata.get('meta'):
+            for k in list(metadata['meta'].keys()):
+                if not k == key:
+                    del metadata[k]
+        d = {
+            'json': metadata,
+            'headers': {},
+        }
+        return self._operate_metadata(session.put, url, **d)
+
+    def delete_metadata(self, session, volume_id, key):
+        url = utils.urljoin(self.base_path, volume_id, 'metadata', key)
+        d = {
+            'headers': {'Accept': ''},
+            'params': None
+        }
+        self._operate_metadata(session.delete, url, has_body=False, **d)
+
+    def get_metadata(self, session, volume_id, key=None):
+        if key:
+            url = utils.urljoin(self.base_path, volume_id, 'metadata', key)
+        else:
+            url = utils.urljoin(self.base_path, volume_id, 'metadata')
+        return self._operate_metadata(session.get, url)
