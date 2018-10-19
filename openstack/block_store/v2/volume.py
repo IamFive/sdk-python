@@ -132,6 +132,7 @@ class VolumeDetail(Volume):
     #: *Type: bool*
     is_encrypted = resource2.Body("encrypted", type=format.BoolStr)
 
+
 class QuotaSet(resource2.Resource):
     resource_key = 'quota_set'
     base_path = '/os-quota-sets/%(tenant_id)s?usage=True'
