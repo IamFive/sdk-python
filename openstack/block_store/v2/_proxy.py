@@ -266,7 +266,7 @@ class Proxy(proxy2.BaseProxy):
         :param volume: The value can be the ID of a volume
                        or a :class:`~openstack.block_store.v2.volume.Volume`
                        instance.
-        ：param bootable: Whether to configure bootable for disk.
+        :param bootable: Whether to configure bootable for disk.
         """
         res = self._get_resource(_volume.Volume, volume)
         volume_action = self._get_resource(_volume.VolumeAction, {})
@@ -278,7 +278,7 @@ class Proxy(proxy2.BaseProxy):
         :param volume: The value can be the ID of a volume
                        or a :class:`~openstack.block_store.v2.volume.Volume`
                        instance.
-        ：param readonly: The readonly flag of disk.
+        :param readonly: The readonly flag of disk.
         """
         res = self._get_resource(_volume.Volume, volume)
         volume_action = self._get_resource(_volume.VolumeAction, {})
