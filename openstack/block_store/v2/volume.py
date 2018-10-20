@@ -180,6 +180,7 @@ class VolumeMetadata(resource2.Resource):
     allow_get = True
     allow_update = True
     allow_delete = True
+    allow_create = True
 
     # properties
     #: EVS disk metadata
