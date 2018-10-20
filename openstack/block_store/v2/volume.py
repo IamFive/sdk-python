@@ -235,3 +235,38 @@ class VolumeMetadata(resource2.Resource):
         else:
             url = utils.urljoin(self.base_path, volume_id, 'metadata')
         return self._operate_metadata(session.get, url)
+
+
+class VolumeAction(resource2.Resource):
+    base_path = '/volumes'
+    service = block_store_service.BlockStoreService()
+
+    # capabilities
+    allow_update = True
+
+    def _action(self, session, volume_id, json):
+        url = utils.urljoin(self.base_path, volume_id, 'action')
+        request = self._prepare_request(requires_id=False)
+        request.uri = url
+        endpoint_override = self.service.get_endpoint_override()
+        session.post(request.uri,
+                     endpoint_filter=self.service,
+                     endpoint_override=endpoint_override,
+                     json=json,
+                     headers={})
+
+    def set_bootable(self, session, volume_id, bootable):
+        d = {
+            'os-set_bootable': {
+                'bootable': bootable
+            }
+        }
+        self._action(session, volume_id, d)
+
+    def set_readonly(self, session, volume_id, readonly):
+        d = {
+            'os-update_readonly_flag': {
+                'readonly': readonly
+            }
+        }
+        self._action(session, volume_id, d)

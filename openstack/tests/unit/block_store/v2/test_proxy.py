@@ -212,3 +212,27 @@ class TestVolumeProxy2(BaseProxyTestCase):
         self.assert_session_get_with('volumes/{0}/metadata/{1}'.
                                      format(volume_id, key))
         self.assertEqual('value1', metadata.meta[key])
+
+    def test_set_volume_bootable(self):
+        volume_id = 'volume-id'
+        bootable = True
+        json = {
+            'os-set_bootable': {
+                'bootable': bootable
+            }
+        }
+        self.proxy.set_volume_bootable(volume_id, bootable)
+        self.assert_session_post_with('volumes/{0}/action'.format(volume_id),
+                                      json=json)
+
+    def test_set_volume_readonly(self):
+        volume_id = 'volume-id'
+        readonly = True
+        json = {
+            'os-update_readonly_flag': {
+                'readonly': readonly
+            }
+        }
+        self.proxy.set_volume_readonly(volume_id, readonly)
+        self.assert_session_post_with('volumes/{0}/action'.format(volume_id),
+                                      json=json)

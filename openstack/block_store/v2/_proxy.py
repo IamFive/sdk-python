@@ -259,3 +259,27 @@ class Proxy(proxy2.BaseProxy):
         res = self._get_resource(_volume.Volume, volume)
         metadata = self._get_resource(_volume.VolumeMetadata, {})
         return metadata.get_metadata(self._session, res.id, key)
+
+    def set_volume_bootable(self, volume, bootable):
+        """Configuring bootable for an EVS disk
+
+        :param volume: The value can be the ID of a volume
+                       or a :class:`~openstack.block_store.v2.volume.Volume`
+                       instance.
+        ：param bootable: Whether to configure bootable for disk.
+        """
+        res = self._get_resource(_volume.Volume, volume)
+        volume_action = self._get_resource(_volume.VolumeAction, {})
+        volume_action.set_bootable(self._session, res.id, bootable)
+
+    def set_volume_readonly(self, volume, readonly):
+        """Configuring Read-Only attribute for an EVS disk
+
+        :param volume: The value can be the ID of a volume
+                       or a :class:`~openstack.block_store.v2.volume.Volume`
+                       instance.
+        ：param readonly: The readonly flag of disk.
+        """
+        res = self._get_resource(_volume.Volume, volume)
+        volume_action = self._get_resource(_volume.VolumeAction, {})
+        volume_action.set_readonly(self._session, res.id, readonly)
