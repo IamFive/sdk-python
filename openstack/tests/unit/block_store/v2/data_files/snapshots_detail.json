@@ -1,0 +1,30 @@
+{
+    "snapshots": [
+        {
+            "status": "available",
+            "os-extended-snapshot-attributes:progress": "100%",
+            "description": null,
+            "created_at": "2013-06-19T07:15:29.000000",
+            "metadata": { },
+            "volume_id": "ae11e59c-bd56-434a-a00c-04757e1c066d",
+            "os-extended-snapshot-attributes:project_id": "d6c277ba8820452e83df36f33c9fa561",
+            "size": 5,
+            "id": "6cd26877-3ca3-4f4e-ae2a-38cc3d6183fa",
+            "name": "name_xx2-snap",
+            "updated_at": null
+        },
+        {
+            "status": "available",
+            "os-extended-snapshot-attributes:progress": "100%",
+            "description": null,
+            "created_at": "2013-06-19T09:08:08.000000",
+            "metadata": { },
+            "volume_id": "ae11e59c-bd56-434a-a00c-04757e1c066d",
+            "os-extended-snapshot-attributes:project_id": "d6c277ba8820452e83df36f33c9fa561",
+            "size": 5,
+            "id": "b3253e26-5c37-48dd-8bf2-8795dd1e848f",
+            "name": "name_xx2-snap",
+            "updated_at": null
+        }
+    ]
+}

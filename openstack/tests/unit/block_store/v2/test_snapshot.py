@@ -26,12 +26,14 @@ SNAPSHOT = {
     "id": FAKE_ID,
     "name": "snap-001",
     "force": "true",
+    'updated_at': '2013-02-25T03:56:53.081642'
 }
 
 DETAILS = {
     "os-extended-snapshot-attributes:progress": "100%",
     "os-extended-snapshot-attributes:project_id":
-        "0c2eba2c5af04d3f9e9d0d410b371fde"
+        "0c2eba2c5af04d3f9e9d0d410b371fde",
+    'update_at': None
 }
 
 DETAILED_SNAPSHOT = SNAPSHOT.copy()
@@ -69,6 +71,7 @@ class TestSnapshot(testtools.TestCase):
         self.assertEqual(SNAPSHOT["volume_id"], sot.volume_id)
         self.assertEqual(SNAPSHOT["size"], sot.size)
         self.assertEqual(SNAPSHOT["name"], sot.name)
+        self.assertEqual(SNAPSHOT["updated_at"], sot.updated_at)
         self.assertTrue(sot.is_forced)
 
 
@@ -88,3 +91,4 @@ class TestSnapshotDetail(testtools.TestCase):
         self.assertEqual(
             DETAILED_SNAPSHOT["os-extended-snapshot-attributes:project_id"],
             sot.project_id)
+        self.assertEqual(DETAILED_SNAPSHOT['update_at'], sot.update_at)

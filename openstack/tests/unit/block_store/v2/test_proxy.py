@@ -177,7 +177,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
         self.mock_response_json_values(metadata)
 
         updated_metadata = self.proxy.update_volume_metadata(volume_id, key=key,
-                                                      **metadata)
+                                                             **metadata)
         self.assert_session_put_with('volumes/{0}/metadata/{1}'.
                                      format(volume_id, key), json=metadata)
         self.assertEqual('value1', updated_metadata.meta['key1'])
@@ -236,3 +236,84 @@ class TestVolumeProxy2(BaseProxyTestCase):
         self.proxy.set_volume_readonly(volume_id, readonly)
         self.assert_session_post_with('volumes/{0}/action'.format(volume_id),
                                       json=json)
+
+    def test_list_snapshot_details(self):
+        self.mock_response_json_file_values('snapshots_detail.json')
+        query = {
+            'limit': 10
+        }
+        details = list(self.proxy.snapshots(**query))
+        self.assert_session_list_with('/snapshots/detail', params=query)
+        self.assertIs(2, len(details))
+        snapshot = details[0]
+        self.assertEqual('available', snapshot.status)
+        self.assertEqual('100%', snapshot.progress)
+        self.assertEqual(None, snapshot.description)
+        self.assertEqual('2013-06-19T07:15:29.000000', snapshot.created_at)
+        self.assertEqual({}, snapshot.metadata)
+        self.assertEqual('ae11e59c-bd56-434a-a00c-04757e1c066d', snapshot.volume_id)
+        self.assertEqual('d6c277ba8820452e83df36f33c9fa561', snapshot.project_id)
+        self.assertEqual(5, snapshot.size)
+        self.assertEqual('6cd26877-3ca3-4f4e-ae2a-38cc3d6183fa', snapshot.id)
+        self.assertEqual('name_xx2-snap', snapshot.name)
+        self.assertEqual(None, snapshot.updated_at)
+
+    def test_create_snapshot(self):
+        self.mock_response_json_file_values('snapshot_create.json')
+        attr = {
+            'name': 'snap-001',
+            'description': 'Daily backup',
+            'volume_id': '5aa119a8-d25b-45a7-8d1b-88e127885635',
+            'force': False,
+            'metadata': { }
+        }
+        expected = {
+            'snapshot': attr
+        }
+        snapshot = self.proxy.create_snapshot(**attr)
+        self.assert_session_post_with('/snapshots', json=expected)
+        self.assertEqual('creating', snapshot.status)
+        self.assertEqual('Daily backup', snapshot.description)
+        self.assertEqual('2013-02-25T03:56:53.081642', snapshot.created_at)
+        self.assertEqual({}, snapshot.metadata)
+        self.assertEqual('5aa119a8-d25b-45a7-8d1b-88e127885635',
+                         snapshot.volume_id)
+        self.assertEqual(1, snapshot.size)
+        self.assertEqual('ffa9bc5e-1172-4021-acaf-cdcd78a9584d', snapshot.id)
+        self.assertEqual('snap-001', snapshot.name)
+        self.assertEqual('2013-02-25T03:56:53.081642', snapshot.updated_at)
+
+    def test_rollback_snapshot(self):
+        snapshot_id = 'snapshot-id'
+        volume_id = 'volume-id'
+        volume_name = 'volume-name'
+        expected = {
+            'rollback': {
+                'name': volume_name,
+                'volume_id': volume_id
+            }
+        }
+        self.mock_response_json_values({
+            'rollback': {
+                'volume_id': volume_id
+            }
+        })
+        snapshot_rollback = self.proxy.rollback_snapshot(volume_id, volume_name, snapshot_id)
+        self.assert_session_post_with('os-vendor-snapshots/{0}/rollback'.
+                                      format(snapshot_id),
+                                      json=expected)
+        self.assertEqual(volume_id, snapshot_rollback.rollback['volume_id'])
+
+    def test_update_snapshot(self):
+        snapshot_id = 'snapshot-id'
+        attrs = {
+            'name': 'name_xx3',
+            'description': 'hello'
+        }
+        self.mock_response_json_file_values('snapshot_update.json')
+        snapshot = self.proxy.update_snapshot(snapshot_id, **attrs)
+        self.assert_session_put_with('snapshots/{0}'.format(snapshot_id),
+                                     json=attrs)
+        self.assertEqual(attrs['name'], snapshot.name)
+        self.assertEqual(attrs['description'], snapshot.description)
+        self.assertEqual('5aa119a8-d25b-45a7-8d1b-88e127885635', snapshot.volume_id)

@@ -13,6 +13,7 @@
 from openstack.block_store import block_store_service
 from openstack import format
 from openstack import resource2
+from openstack import utils
 
 
 class Snapshot(resource2.Resource):
@@ -54,6 +55,9 @@ class Snapshot(resource2.Resource):
     #: Default is ``False``. *Type: bool*
     is_forced = resource2.Body("force", type=format.BoolStr)
 
+    #: The time when the snapshot was updated.
+    updated_at = resource2.Body('updated_at')
+
 
 class SnapshotDetail(Snapshot):
 
@@ -63,3 +67,30 @@ class SnapshotDetail(Snapshot):
     progress = resource2.Body("os-extended-snapshot-attributes:progress")
     #: The project ID this snapshot is associated with.
     project_id = resource2.Body("os-extended-snapshot-attributes:project_id")
+
+    #: The time when the EVS snapshot was updated.
+    update_at = resource2.Body('update_at')
+
+
+class SnapshotRollback(resource2.Resource):
+    base_path = '/os-vendor-snapshots'
+    service = block_store_service.BlockStoreService()
+
+    # capabilities
+    allow_update = True
+
+    # Properties
+    #: The snapshot rollback information
+    rollback = resource2.Body('rollback', type=dict)
+
+    def rollback_snapshot(self, session, snapshot_id, **kwargs):
+        request = self._prepare_request(requires_id=False)
+        request.uri = utils.urljoin(self.base_path, snapshot_id, 'rollback')
+        endpoint_override = self.service.get_endpoint_override()
+        response = session.post(request.uri,
+                                endpoint_filter=self.service,
+                                endpoint_override=endpoint_override,
+                                json=kwargs,
+                                headers={})
+        self._translate_response(response)
+        return self

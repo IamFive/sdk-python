@@ -283,3 +283,37 @@ class Proxy(proxy2.BaseProxy):
         res = self._get_resource(_volume.Volume, volume)
         volume_action = self._get_resource(_volume.VolumeAction, {})
         volume_action.set_readonly(self._session, res.id, readonly)
+
+    def rollback_snapshot(self, volume_id, volume_name, snapshot_id):
+        """Rolling back a snapshot to an EVS disk
+
+        :param volume_id: The ID of the EVS disk which needs rollback.
+        :param volume_name: The name of the EVS disk which needs rollback.
+        :param snapshot_id: The ID of the snapshot which needs rollback.
+
+        :returns: The snapshot rollback information
+        :rtype: :class:`~openstack.block_store.v2.snapshot.SnapshotRollback`
+        """
+        snapshot_rollback = self._get_resource(_snapshot.SnapshotRollback, {})
+        json = {
+            'rollback': {
+                'name': volume_name,
+                'volume_id': volume_id
+            }
+        }
+        return snapshot_rollback.rollback_snapshot(self._session, snapshot_id, **json)
+
+    def update_snapshot(self, snapshot, **attrs):
+        """Updating an EVS snapshot
+
+        :param snapshot: The value can be the ID of a snapshot
+                or a :class: `~openstack.block_store.v2.snapshot.Snapshot`
+                instance.
+        :param dict attrs: Keyword arguments which will be used to create
+                a :class:`~openstack.block_store.v2.snapshot.Snapshot`,
+                comprised of the properties on the Snapshot class.
+
+        :returns: The updated snapshot
+        :rtype: :class:`openstack.block_store.v2.snapshot.Snapshot`
+        """
+        return self._update(_snapshot.Snapshot, snapshot, prepend_key=False, **attrs)
