@@ -203,7 +203,7 @@ class Proxy(proxy2.BaseProxy):
         """Adding metadata of an EVS disk
 
         :param volume: The value can be the ID of a volume
-                       or a :class:`~openstack.block_store.v2.volume.VolumeMetadata`
+                       or a :class:`~openstack.block_store.v2.volume.Volume`
                        instance.
         :param dict metadata: Keyword arguments which will be used to create
                            a :class:`~openstack.block_store.v2.volume.VolumeMetadata`,
@@ -211,7 +211,7 @@ class Proxy(proxy2.BaseProxy):
                            class.
 
         :returns: the metadata of an EVS disk
-        :rtype: :class:`~openstack.blcok_store.v2.volume.VolumeMetadata`
+        :rtype: :class:`~openstack.block_store.v2.volume.VolumeMetadata`
         """
         res = self._get_resource(_volume.Volume, volume)
         res_metadata = self._get_resource(_volume.VolumeMetadata, metadata)
@@ -221,7 +221,7 @@ class Proxy(proxy2.BaseProxy):
         """Updating metadata of an EVS disk
 
         :param volume: The value can be the ID of a volume
-                       or a :class:`~openstack.block_store.v2.volume.VolumeMetadata`
+                       or a :class:`~openstack.block_store.v2.volume.Volume`
                        instance.
         :param key: The key of metadata that requires the update.
         :param dict metadata: Keyword arguments which will be used to create
@@ -240,7 +240,7 @@ class Proxy(proxy2.BaseProxy):
         """Deleting one piece of EVS disk metadata
 
         :param volume: The value can be the ID of a volume
-                       or a :class:`~openstack.block_store.v2.volume.VolumeMetadata`
+                       or a :class:`~openstack.block_store.v2.volume.Volume`
                        instance.
         :param key: The key of the metadata that requires the deletion.
         """
@@ -252,7 +252,7 @@ class Proxy(proxy2.BaseProxy):
         """Querying EVS disk metadata
 
         :param volume: The value can be the ID of a volume
-                       or a :class:`~openstack.block_store.v2.volume.VolumeMetadata`
+                       or a :class:`~openstack.block_store.v2.volume.Volume`
                        instance.
         :param key: The key of the metadata to be queried.
         """
