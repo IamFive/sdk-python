@@ -145,7 +145,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
         }
         self.mock_response_json_values(metadata)
 
-        new_metadata = self.proxy.create_metadata(volume_id, **metadata)
+        new_metadata = self.proxy.create_volume_metadata(volume_id, **metadata)
         self.assert_session_post_with('volumes/{0}/metadata'.format(volume_id),
                                       json=metadata)
 
@@ -161,7 +161,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
         }
         self.mock_response_json_values(metadata)
 
-        updated_metadata = self.proxy.update_metadata(volume_id, **metadata)
+        updated_metadata = self.proxy.update_volume_metadata(volume_id, **metadata)
         self.assert_session_put_with('volumes/{0}/metadata'.format(volume_id),
                                      json=metadata)
         self.assertEqual('value1', updated_metadata.metadata['key1'])
@@ -176,7 +176,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
         }
         self.mock_response_json_values(metadata)
 
-        updated_metadata = self.proxy.update_metadata(volume_id, key=key,
+        updated_metadata = self.proxy.update_volume_metadata(volume_id, key=key,
                                                       **metadata)
         self.assert_session_put_with('volumes/{0}/metadata/{1}'.
                                      format(volume_id, key), json=metadata)
@@ -185,7 +185,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
     def test_delete_metadata(self):
         volume_id = 'volume-id'
         key = 'key1'
-        self.proxy.delete_metadata(volume_id, key)
+        self.proxy.delete_volume_metadata(volume_id, key)
         self.assert_session_delete('volumes/{0}/metadata/{1}'.format(volume_id,
                                                                      key))
 
@@ -196,7 +196,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
             }
         })
         volume_id = 'volume-id'
-        metadata = self.proxy.get_metadata(volume_id)
+        metadata = self.proxy.get_volume_metadata(volume_id)
         self.assert_session_get_with('volumes/{0}/metadata'.format(volume_id))
         self.assertEqual('value1', metadata.metadata['key1'])
 
@@ -208,7 +208,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
         })
         key = 'key1'
         volume_id = 'volume-id'
-        metadata = self.proxy.get_metadata(volume_id, key)
+        metadata = self.proxy.get_volume_metadata(volume_id, key)
         self.assert_session_get_with('volumes/{0}/metadata/{1}'.
                                      format(volume_id, key))
         self.assertEqual('value1', metadata.meta[key])

@@ -199,7 +199,7 @@ class Proxy(proxy2.BaseProxy):
 
         return self._get(_volume.QuotaSet, None, False, tenant_id=tenant_id)
 
-    def create_metadata(self, volume, **metadata):
+    def create_volume_metadata(self, volume, **metadata):
         """Adding metadata of an EVS disk
 
         :param volume: The value can be the ID of a volume
@@ -217,7 +217,7 @@ class Proxy(proxy2.BaseProxy):
         res_metadata = self._get_resource(_volume.VolumeMetadata, metadata)
         return res_metadata.create_metadata(self._session, res.id, metadata)
 
-    def update_metadata(self, volume, key=None, **metadata):
+    def update_volume_metadata(self, volume, key=None, **metadata):
         """Updating metadata of an EVS disk
 
         :param volume: The value can be the ID of a volume
@@ -236,7 +236,7 @@ class Proxy(proxy2.BaseProxy):
         res_metadata = self._get_resource(_volume.VolumeMetadata, metadata)
         return res_metadata.update_metadata(self._session, res.id, metadata, key)
 
-    def delete_metadata(self, volume, key):
+    def delete_volume_metadata(self, volume, key):
         """Deleting one piece of EVS disk metadata
 
         :param volume: The value can be the ID of a volume
@@ -248,7 +248,7 @@ class Proxy(proxy2.BaseProxy):
         metadata = self._get_resource(_volume.VolumeMetadata, {})
         metadata.delete_metadata(self._session, res.id, key)
 
-    def get_metadata(self, volume, key=None):
+    def get_volume_metadata(self, volume, key=None):
         """Querying EVS disk metadata
 
         :param volume: The value can be the ID of a volume
