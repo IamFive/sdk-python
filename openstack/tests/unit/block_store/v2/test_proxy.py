@@ -135,7 +135,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
         self.assertEqual(volume.metadata['quantityGB'], '40')
         self.assertEqual(volume.links[0]['rel'], 'self')
 
-    def test_create_metadata(self):
+    def test_create_volume_metadata(self):
         volume_id = 'volume-id'
         metadata = {
             'metadata': {
@@ -151,7 +151,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
 
         self.assertEqual('value1', new_metadata.metadata['key1'])
 
-    def test_update_metadata(self):
+    def test_update_volume_metadata(self):
         volume_id = 'volume-id'
         metadata = {
             'metadata': {
@@ -166,7 +166,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
                                      json=metadata)
         self.assertEqual('value1', updated_metadata.metadata['key1'])
 
-    def test_update_metadata_with_key(self):
+    def test_update_volume_metadata_with_key(self):
         volume_id = 'volume-id'
         key = 'key1'
         metadata = {
@@ -182,14 +182,14 @@ class TestVolumeProxy2(BaseProxyTestCase):
                                      format(volume_id, key), json=metadata)
         self.assertEqual('value1', updated_metadata.meta['key1'])
 
-    def test_delete_metadata(self):
+    def test_delete_volume_metadata(self):
         volume_id = 'volume-id'
         key = 'key1'
         self.proxy.delete_volume_metadata(volume_id, key)
         self.assert_session_delete('volumes/{0}/metadata/{1}'.format(volume_id,
                                                                      key))
 
-    def test_get_metadata(self):
+    def test_get_volume_metadata(self):
         self.mock_response_json_values({
             'metadata': {
                 'key1': 'value1'
@@ -200,7 +200,7 @@ class TestVolumeProxy2(BaseProxyTestCase):
         self.assert_session_get_with('volumes/{0}/metadata'.format(volume_id))
         self.assertEqual('value1', metadata.metadata['key1'])
 
-    def test_get_metadata_with_key(self):
+    def test_get_volume_metadata_with_key(self):
         self.mock_response_json_values({
             'meta': {
                 'key1': 'value1'

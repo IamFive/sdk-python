@@ -243,6 +243,8 @@ class Proxy(proxy2.BaseProxy):
                        or a :class:`~openstack.block_store.v2.volume.Volume`
                        instance.
         :param key: The key of the metadata that requires the deletion.
+
+        :returns: ``None``
         """
         res = self._get_resource(_volume.Volume, volume)
         metadata = self._get_resource(_volume.VolumeMetadata, {})
@@ -255,6 +257,9 @@ class Proxy(proxy2.BaseProxy):
                        or a :class:`~openstack.block_store.v2.volume.Volume`
                        instance.
         :param key: The key of the metadata to be queried.
+
+        :returns: The metadata of an EVS disk.
+        :rtype: :class:`~openstack.block_store.v2.volume.VolumeMetadata`
         """
         res = self._get_resource(_volume.Volume, volume)
         metadata = self._get_resource(_volume.VolumeMetadata, {})
@@ -362,6 +367,8 @@ class Proxy(proxy2.BaseProxy):
                        or a :class:`~openstack.block_store.v2.snapshot.Snapshot`
                        instance.
         :param key: The key of the metadata that requires the deletion.
+
+        :returns: ``None``
         """
         res = self._get_resource(_snapshot.Snapshot, snapshot)
         metadata = self._get_resource(_snapshot.SnapshotMetadata, {})
