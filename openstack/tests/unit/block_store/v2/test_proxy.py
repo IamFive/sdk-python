@@ -317,3 +317,83 @@ class TestVolumeProxy2(BaseProxyTestCase):
         self.assertEqual(attrs['name'], snapshot.name)
         self.assertEqual(attrs['description'], snapshot.description)
         self.assertEqual('5aa119a8-d25b-45a7-8d1b-88e127885635', snapshot.volume_id)
+
+    def test_create_snapshot_metadata(self):
+        snapshot_id = 'snapshot-id'
+        metadata = {
+            'metadata': {
+                'key1': 'value1',
+                'key2': 'value2'
+            }
+        }
+        self.mock_response_json_values(metadata)
+
+        new_metadata = self.proxy.create_snapshot_metadata(snapshot_id, **metadata)
+        self.assert_session_post_with('snapshots/{0}/metadata'.format(snapshot_id),
+                                      json=metadata)
+
+        self.assertEqual('value1', new_metadata.metadata['key1'])
+
+    def test_update_snapshot_metadata(self):
+        snapshot_id = 'snapshot-id'
+        metadata = {
+            'metadata': {
+                'key1': 'value1',
+                'key2': 'value2'
+            }
+        }
+        self.mock_response_json_values(metadata)
+
+        updated_metadata = self.proxy.update_snapshot_metadata(snapshot_id, **metadata)
+        self.assert_session_put_with('snapshots/{0}/metadata'.format(snapshot_id),
+                                     json=metadata)
+        self.assertEqual('value1', updated_metadata.metadata['key1'])
+
+    def test_update_metadata_with_key(self):
+        snapshot_id = 'snapshot-id'
+        key = 'key1'
+        metadata = {
+            'meta': {
+                'key1': 'value1',
+            }
+        }
+        self.mock_response_json_values(metadata)
+
+        updated_metadata = self.proxy.update_snapshot_metadata(snapshot_id,
+                                                               key=key,
+                                                               **metadata)
+        self.assert_session_put_with('snapshots/{0}/metadata/{1}'.
+                                     format(snapshot_id, key), json=metadata)
+        self.assertEqual('value1', updated_metadata.meta['key1'])
+
+    def test_delete_snapshot_metadata(self):
+        snapshot_id = 'snapshot-id'
+        key = 'key1'
+        self.proxy.delete_snapshot_metadata(snapshot_id, key)
+        self.assert_session_delete('snapshots/{0}/metadata/{1}'.
+                                   format(snapshot_id, key))
+
+    def test_get_snapshot_metadata(self):
+        self.mock_response_json_values({
+            'metadata': {
+                'key1': 'value1'
+            }
+        })
+        snapshot_id = 'snapshot-id'
+        metadata = self.proxy.get_snapshot_metadata(snapshot_id)
+        self.assert_session_get_with('snapshots/{0}/metadata'.format(snapshot_id))
+        self.assertEqual('value1', metadata.metadata['key1'])
+
+    def test_get_snapshot_metadata_with_key(self):
+        self.mock_response_json_values({
+            'meta': {
+                'key1': 'value1'
+            }
+        })
+        key = 'key1'
+        snapshot_id = 'snapshot-id'
+        metadata = self.proxy.get_snapshot_metadata(snapshot_id, key)
+        self.assert_session_get_with('snapshots/{0}/metadata/{1}'.
+                                     format(snapshot_id, key))
+        self.assertEqual('value1', metadata.meta[key])
+

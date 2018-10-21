@@ -94,3 +94,68 @@ class SnapshotRollback(resource2.Resource):
                                 headers={})
         self._translate_response(response)
         return self
+
+
+class SnapshotMetadata(resource2.Resource):
+    base_path = '/snapshots'
+    service = block_store_service.BlockStoreService()
+
+    # capabilities
+    allow_create = True
+    allow_get = True
+    allow_update = True
+    allow_delete = True
+
+    # Properties
+    #: The disk snapshot information
+    meta = resource2.Body('meta')
+    metadata = resource2.Body('metadata')
+
+    def _operate_metadata(self, method, url, has_body=True, **kwargs):
+        request = self._prepare_request(requires_id=False)
+        request.uri = url
+        endpoint_override = self.service.get_endpoint_override()
+        response = method(request.uri,
+                          endpoint_filter=self.service,
+                          endpoint_override=endpoint_override,
+                          **kwargs)
+        self._translate_response(response, has_body)
+        return self
+
+    def create_metadata(self, session, snapshot_id, metadata):
+        url = utils.urljoin(self.base_path, snapshot_id, 'metadata')
+        d = {
+            'json': metadata,
+            'headers': {},
+        }
+        return self._operate_metadata(session.post, url, **d)
+
+    def get_metadata(self, session, snapshot_id, key=None):
+        if key:
+            url = utils.urljoin(self.base_path, snapshot_id, 'metadata', key)
+        else:
+            url = utils.urljoin(self.base_path, snapshot_id, 'metadata')
+        return self._operate_metadata(session.get, url)
+
+    def update_metadata(self, session, snapshot_id, metadata, key=None):
+        if key:
+            url = utils.urljoin(self.base_path, snapshot_id, 'metadata', key)
+        else:
+            url = utils.urljoin(self.base_path, snapshot_id, 'metadata')
+        if key and metadata.get('meta'):
+            for k in list(metadata['meta'].keys()):
+                if not k == key:
+                    del metadata[k]
+        d = {
+            'json': metadata,
+            'headers': {},
+        }
+        return self._operate_metadata(session.put, url, **d)
+
+    def delete_metadata(self, session, snapshot_id, key):
+        url = utils.urljoin(self.base_path, snapshot_id, 'metadata', key)
+        d = {
+            'headers': {'Accept': ''},
+            'params': None
+        }
+        self._operate_metadata(session.delete, url, has_body=False, **d)

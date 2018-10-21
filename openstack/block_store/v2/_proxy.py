@@ -317,3 +317,67 @@ class Proxy(proxy2.BaseProxy):
         :rtype: :class:`openstack.block_store.v2.snapshot.Snapshot`
         """
         return self._update(_snapshot.Snapshot, snapshot, prepend_key=False, **attrs)
+
+    def create_snapshot_metadata(self, snapshot, **metadata):
+        """Adding metadata of an EVS snapshot
+
+        :param snapshot: The value can be the ID of a snapshot
+                       or a :class:`~openstack.block_store.v2.snapshot.Snapshot`
+                       instance.
+        :param dict metadata: Keyword arguments which will be used to create
+                           a :class:`~openstack.block_store.v2.snapshot.SnapshotMetadata`,
+                           comprised of the properties on the SnapshotMetadata
+                           class.
+
+        :returns: the metadata of an EVS snapshot
+        :rtype: :class:`~openstack.block_store.v2.snapshot.SnapshotMetadata`
+        """
+        res = self._get_resource(_snapshot.Snapshot, snapshot)
+        res_metadata = self._get_resource(_snapshot.SnapshotMetadata, metadata)
+        return res_metadata.create_metadata(self._session, res.id, metadata)
+
+    def update_snapshot_metadata(self, snapshot, key=None, **metadata):
+        """Updating metadata of an EVS snapshot
+
+        :param snapshot: The value can be the ID of a snapshot
+                       or a :class:`~openstack.block_store.v2.snapshot.Snapshot`
+                       instance.
+        :param key: The key of metadata that requires the update.
+        :param dict metadata: Keyword arguments which will be used to create
+                           a :class:`~openstack.block_store.v2.snapshot.SnapshotMetadata`,
+                           comprised of the properties on the SnapshotMetadata
+                           class.
+
+        :returns: The metadata of an EVS snapshot
+        :rtype: :class:`~openstack.blcok_store.v2.snapshot.SnapshotMetadata`
+        """
+        res = self._get_resource(_snapshot.Snapshot, snapshot)
+        res_metadata = self._get_resource(_snapshot.SnapshotMetadata, metadata)
+        return res_metadata.update_metadata(self._session, res.id, metadata, key)
+
+    def delete_snapshot_metadata(self, snapshot, key):
+        """Deleting one piece of EVS disk snapshot metadata
+
+        :param snapshot: The value can be the ID of a snapshot
+                       or a :class:`~openstack.block_store.v2.snapshot.Snapshot`
+                       instance.
+        :param key: The key of the metadata that requires the deletion.
+        """
+        res = self._get_resource(_snapshot.Snapshot, snapshot)
+        metadata = self._get_resource(_snapshot.SnapshotMetadata, {})
+        metadata.delete_metadata(self._session, res.id, key)
+
+    def get_snapshot_metadata(self, snapshot, key=None):
+        """Querying EVS snapshot metadata
+
+        :param snapshot: The value can be the ID of a snapshot
+                       or a :class:`~openstack.block_store.v2.snapshot.Snapshot`
+                       instance.
+        :param key: The key of the metadata to be queried.
+
+        :returns: The metadata of an EVS snapshot
+        :rtype: :class:`~openstack.block_store.v2.snapshot.SnapshotMetadata`
+        """
+        res = self._get_resource(_snapshot.Snapshot, snapshot)
+        metadata = self._get_resource(_snapshot.SnapshotMetadata, {})
+        return metadata.get_metadata(self._session, res.id, key)
