@@ -14,28 +14,24 @@ from openstack.block_store import block_store_service
 from openstack import resource2
 
 
-class Type(resource2.Resource):
-    resource_key = "volume_type"
-    resources_key = "volume_types"
-    base_path = "/types"
+class Extension(resource2.Resource):
+    base_path = '/extensions'
+    resources_key = 'extensions'
     service = block_store_service.BlockStoreService()
 
     # capabilities
-    allow_get = True
-    allow_create = True
-    allow_delete = True
     allow_list = True
 
     # Properties
-    #: A ID representing this type.
-    id = resource2.Body("id")
-    #: Name of the type.
-    name = resource2.Body("name")
-    #: A dict of extra specifications. "capabilities" is a usual key.
-    extra_specs = resource2.Body("extra_specs", type=dict)
-    #: Description of the type.
+    #: The last update time
+    updated = resource2.Body('updated')
+    #: Description
     description = resource2.Body('description')
-    #: The quality of service ID of the EVS disk type.
-    qos_specs_id = resource2.Body('qos_specs_id')
-    #: Whether the EVS disk type is public.
-    is_public = resource2.Body('is_public', type=bool)
+    #: The link for the disk transfer
+    links = resource2.Body('links', type=list)
+    #: The link associated with the extension
+    namespace = resource2.Body('namespace')
+    #: The alias of the extension
+    alias = resource2.Body('alias')
+    #: The name of the disk transfer
+    name = resource2.Body('name')

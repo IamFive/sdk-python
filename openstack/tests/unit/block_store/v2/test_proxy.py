@@ -397,3 +397,49 @@ class TestVolumeProxy2(BaseProxyTestCase):
                                      format(snapshot_id, key))
         self.assertEqual('value1', metadata.meta[key])
 
+    def test_extensions(self):
+        self.mock_response_json_file_values('extensions.json')
+        extensions = list(self.proxy.extensions())
+        self.assert_session_list_with('/extensions')
+        self.assertEqual(26, len(extensions))
+
+        extension = extensions[0]
+        self.assertEqual('2013-04-18T00:00:00+00:00', extension.updated)
+        self.assertEqual('SchedulerHints', extension.name)
+        self.assertEqual([], extension.links)
+        self.assertEqual('http://docs.openstack.org/block-service/ext/scheduler-hints/api/v2', extension.namespace)
+        self.assertEqual('OS-SCH-HNT', extension.alias)
+        self.assertEqual('Pass arbitrary key/value pairs to the scheduler.', extension.description)
+
+    def test_types(self):
+        self.mock_response_json_file_values('types.json')
+        types = list(self.proxy.types())
+        self.assert_session_list_with('/types')
+        self.assertEqual(3, len(types))
+
+        type = types[0]
+        self.assertEqual('SAS', type.extra_specs['volume_backend_name'])
+        self.assertEqual('az1.dc1', type.extra_specs['availability-zone'])
+        self.assertEqual('az1.dc1,az2.dc2', type.extra_specs['RESKEY:availability_zone'])
+        self.assertEqual('az2.dc2', type.extra_specs['os-vendor-extended:sold_out_availability_zones'])
+        self.assertEqual('SAS', type.name)
+        self.assertEqual(None, type.qos_specs_id)
+        self.assertEqual('6c81c680-df58-4512-81e7-ecf66d160638', type.id)
+        self.assertEqual(True, type.is_public)
+        self.assertEqual(None, type.description)
+
+    def test_get_type(self):
+        self.mock_response_json_file_values('type.json')
+        type_id = 'ea6e3c13-aac5-46e0-b280-745ed272e662'
+        type = self.proxy.get_type(type_id)
+        self.assert_session_get_with('types/{0}'.format(type_id))
+
+        self.assertEqual('SATA', type.extra_specs['volume_backend_name'])
+        self.assertEqual('az1.dc1', type.extra_specs['availability-zone'])
+        self.assertEqual('az1.dc1,az2.dc2', type.extra_specs['RESKEY:availability_zone'])
+        self.assertEqual('az2.dc2', type.extra_specs['os-vendor-extended:sold_out_availability_zones'])
+        self.assertEqual('SATA', type.name)
+        self.assertEqual(None, type.qos_specs_id)
+        self.assertEqual(type_id, type.id)
+        self.assertEqual(True, type.is_public)
+        self.assertEqual(None, type.description)

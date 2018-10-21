@@ -13,6 +13,7 @@
 from openstack.block_store.v2 import snapshot as _snapshot
 from openstack.block_store.v2 import type as _type
 from openstack.block_store.v2 import volume as _volume
+from openstack.block_store.v2 import extension as _extension
 from openstack import proxy2
 
 
@@ -388,3 +389,10 @@ class Proxy(proxy2.BaseProxy):
         res = self._get_resource(_snapshot.Snapshot, snapshot)
         metadata = self._get_resource(_snapshot.SnapshotMetadata, {})
         return metadata.get_metadata(self._session, res.id, key)
+
+    def extensions(self):
+        """Retrieve a generator of extensions
+
+        :returns: A generator of extension objects.
+        """
+        return self._list(_extension.Extension)
