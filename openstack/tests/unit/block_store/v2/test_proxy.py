@@ -443,3 +443,39 @@ class TestVolumeProxy2(BaseProxyTestCase):
         self.assertEqual(type_id, type.id)
         self.assertEqual(True, type.is_public)
         self.assertEqual(None, type.description)
+
+    def test_versions(self):
+        self.mock_response_json_file_values('versions.json')
+        versions = list(self.proxy.versions())
+        self.assert_session_list_with('/')
+        self.assertEqual(3, len(versions))
+
+        version = versions[0]
+        self.assertEqual('', version.min_version)
+        self.assertEqual('application/vnd.openstack.volume+json;version=1',
+                         version.media_types[0]['type'])
+        self.assertEqual('application/xml', version.media_types[1]['base'])
+        self.assertEqual('text/html', version.links[0]['type'])
+        self.assertEqual('self', version.links[1]['rel'])
+        self.assertEqual('v1.0', version.id)
+        self.assertEqual('2014-06-28T12:20:21Z', version.updated)
+        self.assertEqual('', version.version)
+        self.assertEqual('SUPPORTED', version.status)
+
+    def test_versions_v2(self):
+        self.mock_response_json_file_values('versions_v2.json')
+        versions = list(self.proxy.versions(v2=True))
+        self.assert_session_list_with('/v2')
+        self.assertEqual(1, len(versions))
+
+        version = versions[0]
+        self.assertEqual('', version.min_version)
+        self.assertEqual('application/vnd.openstack.volume+json;version=1',
+                         version.media_types[0]['type'])
+        self.assertEqual('application/xml', version.media_types[1]['base'])
+        self.assertEqual('text/html', version.links[0]['type'])
+        self.assertEqual('self', version.links[1]['rel'])
+        self.assertEqual('v2.0', version.id)
+        self.assertEqual('2014-06-28T12:20:21Z', version.updated)
+        self.assertEqual('', version.version)
+        self.assertEqual('SUPPORTED', version.status)

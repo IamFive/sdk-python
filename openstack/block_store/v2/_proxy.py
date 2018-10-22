@@ -14,6 +14,7 @@ from openstack.block_store.v2 import snapshot as _snapshot
 from openstack.block_store.v2 import type as _type
 from openstack.block_store.v2 import volume as _volume
 from openstack.block_store.v2 import extension as _extension
+from openstack.block_store import version as _version
 from openstack import proxy2
 
 
@@ -396,3 +397,13 @@ class Proxy(proxy2.BaseProxy):
         :returns: A generator of extension objects.
         """
         return self._list(_extension.Extension)
+
+    def versions(self, v2=False):
+        """Retrieve a generator of API versions
+
+        :param v2: Whether query v2.
+
+        :returns: A generator of version objects.
+        """
+        res = _version.VersionV2 if v2 else _version.Version
+        return self._list(res)
