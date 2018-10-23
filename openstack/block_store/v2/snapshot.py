@@ -14,6 +14,7 @@ from openstack.block_store import block_store_service
 from openstack import format
 from openstack import resource2
 from openstack import utils
+from openstack import exceptions
 
 
 class Snapshot(resource2.Resource):
@@ -152,10 +153,22 @@ class SnapshotMetadata(resource2.Resource):
         }
         return self._operate_metadata(session.put, url, **d)
 
-    def delete_metadata(self, session, snapshot_id, key):
+    def delete_metadata(self, session, snapshot_id, key, ignore_missing):
         url = utils.urljoin(self.base_path, snapshot_id, 'metadata', key)
         d = {
             'headers': {'Accept': ''},
             'params': None
         }
-        self._operate_metadata(session.delete, url, has_body=False, **d)
+        try:
+            self._operate_metadata(session.delete, url, has_body=False, **d)
+        except exceptions.NotFoundException as e:
+            if ignore_missing:
+                return None
+            else:
+                # Reraise with a more specific type and message
+                raise exceptions.ResourceNotFound(
+                    message="No %s found for %s" %
+                            (self.__name__, key),
+                    details=e.details, response=e.response,
+                    request_id=e.request_id, url=e.url, method=e.method,
+                    http_status=e.http_status, cause=e.cause, code=e.code)

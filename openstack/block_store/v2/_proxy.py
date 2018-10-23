@@ -238,19 +238,25 @@ class Proxy(proxy2.BaseProxy):
         res_metadata = self._get_resource(_volume.VolumeMetadata, metadata)
         return res_metadata.update_metadata(self._session, res.id, metadata, key)
 
-    def delete_volume_metadata(self, volume, key):
+    def delete_volume_metadata(self, volume, key, ignore_missing=True):
         """Deleting one piece of EVS disk metadata
 
         :param volume: The value can be the ID of a volume
                        or a :class:`~openstack.block_store.v2.volume.Volume`
                        instance.
         :param key: The key of the metadata that requires the deletion.
+        :param bool ignore_missing: When set to ``False``
+                    :class:`~openstack.exceptions.ResourceNotFound` will be
+                    raised when the metadata does not exist.
+                    When set to ``True``, no exception will be set when
+                    attempting to delete a nonexistent metadata.
 
         :returns: ``None``
         """
         res = self._get_resource(_volume.Volume, volume)
         metadata = self._get_resource(_volume.VolumeMetadata, {})
-        metadata.delete_metadata(self._session, res.id, key)
+        metadata.delete_metadata(self._session, res.id, key,
+                                 ignore_missing=ignore_missing)
 
     def get_volume_metadata(self, volume, key=None):
         """Querying EVS disk metadata
@@ -362,19 +368,25 @@ class Proxy(proxy2.BaseProxy):
         res_metadata = self._get_resource(_snapshot.SnapshotMetadata, metadata)
         return res_metadata.update_metadata(self._session, res.id, metadata, key)
 
-    def delete_snapshot_metadata(self, snapshot, key):
+    def delete_snapshot_metadata(self, snapshot, key, ignore_missing=True):
         """Deleting one piece of EVS disk snapshot metadata
 
         :param snapshot: The value can be the ID of a snapshot
                        or a :class:`~openstack.block_store.v2.snapshot.Snapshot`
                        instance.
         :param key: The key of the metadata that requires the deletion.
+        :param bool ignore_missing: When set to ``False``
+                    :class:`~openstack.exceptions.ResourceNotFound` will be
+                    raised when the metadata does not exist.
+                    When set to ``True``, no exception will be set when
+                    attempting to delete a nonexistent metadata.
 
         :returns: ``None``
         """
         res = self._get_resource(_snapshot.Snapshot, snapshot)
         metadata = self._get_resource(_snapshot.SnapshotMetadata, {})
-        metadata.delete_metadata(self._session, res.id, key)
+        metadata.delete_metadata(self._session, res.id, key,
+                                 ignore_missing=ignore_missing)
 
     def get_snapshot_metadata(self, snapshot, key=None):
         """Querying EVS snapshot metadata
