@@ -20,6 +20,8 @@ class TestVolume(base.BaseFunctionalTest):
 
     VOLUME_NAME = uuid.uuid4().hex
     VOLUME_ID = None
+    VOLUME_METADATA_KEY = 'key1'
+    VOLUME_METADATA_VALUE = 'value1'
 
     @classmethod
     def setUpClass(cls):
@@ -38,6 +40,9 @@ class TestVolume(base.BaseFunctionalTest):
 
     @classmethod
     def tearDownClass(cls):
+        sot = cls.conn.block_store.delete_volume_metadata(cls.VOLUME_ID, key=cls.VOLUME_METADATA_KEY)
+        cls.assertIs(None, sot)
+
         sot = cls.conn.block_store.delete_volume(cls.VOLUME_ID,
                                                  ignore_missing=False)
         cls.assertIs(None, sot)
@@ -45,3 +50,64 @@ class TestVolume(base.BaseFunctionalTest):
     def test_get(self):
         sot = self.conn.block_store.get_volume(self.VOLUME_ID)
         self.assertEqual(self.VOLUME_NAME, sot.name)
+
+    def test_os_quota_set(self):
+        tenant_id = self.conn.session.auth._project_id
+        quota_set = self.conn.block_store.os_quota_set(tenant_id)
+        self.assertIsInstance(quota_set, _volume.QuotaSet)
+        self.assertEqual(tenant_id, quota_set.tenant_id)
+
+    def test_volumes(self):
+        volumes = list(self.conn.block_store.volumes(details=False))
+        volume_ids = [v.id for v in volumes]
+        self.assertTrue(self.VOLUME_ID in volume_ids)
+
+    def test_create_volume_metadata(self):
+        attrs = {
+            'metadata': {
+                self.VOLUME_METADATA_KEY: self.VOLUME_METADATA_VALUE
+            }
+        }
+        metadata = self.conn.block_store.create_volume_metadata(self.VOLUME_ID, **attrs)
+        self.assertIsInstance(metadata, _volume.VolumeMetadata)
+        self.assertEqual(self.VOLUME_METADATA_VALUE, metadata.metadata[self.VOLUME_METADATA_KEY])
+
+    def test_get_volume_metadata(self):
+        metadata = self.conn.block_store.get_volume_metadata(self.VOLUME_ID)
+        self.assertIsInstance(metadata, _volume.VolumeMetadata)
+        self.assertEqual(self.VOLUME_METADATA_VALUE, metadata.metadata[self.VOLUME_METADATA_KEY])
+
+    def test_get_volume_metadata_with_key(self):
+        metadata = self.conn.block_store.get_volume_metadata(self.VOLUME_ID, key=self.VOLUME_METADATA_KEY)
+        self.assertIsInstance(metadata, _volume.VolumeMetadata)
+        self.assertEqual(self.VOLUME_METADATA_VALUE, metadata.meta[self.VOLUME_METADATA_KEY])
+
+    def test_update_volume_metadata(self):
+        new_value = 'new value'
+        attrs = {
+            'metadata': {
+                self.VOLUME_METADATA_KEY: new_value
+            }
+        }
+        metadata = self.conn.block_store.update_volume_metadata(self.VOLUME_ID, **attrs)
+        self.assertIsInstance(metadata, _volume.VolumeMetadata)
+        self.assertEqual(new_value, metadata.metadata[self.VOLUME_METADATA_KEY])
+
+    def test_update_volume_metadata_with_key(self):
+        new_value = 'new value 2'
+        attrs = {
+            'meta': {
+                self.VOLUME_METADATA_KEY: new_value
+            }
+        }
+        metadata = self.conn.block_store.update_volume_metadata(self.VOLUME_ID, key=self.VOLUME_METADATA_KEY, **attrs)
+        self.assertIsInstance(metadata, _volume.VolumeMetadata)
+        self.assertEqual(new_value, metadata.meta[self.VOLUME_METADATA_KEY])
+
+    def test_set_volume_bootable(self):
+        ret = self.conn.block_store.set_volume_bootable(self.VOLUME_ID, True)
+        self.assertIsNone(ret)
+
+    def test_set_volume_readonly(self):
+        ret = self.conn.block_store.set_volume_readonly(self.VOLUME_ID, True)
+        self.assertIsNone(ret)
