@@ -23,6 +23,8 @@ class TestSnapshot(base.BaseFunctionalTest):
     SNAPSHOT_ID = None
     VOLUME_NAME = uuid.uuid4().hex
     VOLUME_ID = None
+    SNAPSHOT_METADATA_KEY = 'key1'
+    SNAPSHOT_METADATA_VALUE = 'value1'
 
     @classmethod
     def setUpClass(cls):
@@ -48,10 +50,23 @@ class TestSnapshot(base.BaseFunctionalTest):
                                              wait=120)
         assert isinstance(snapshot, _snapshot.Snapshot)
         cls.assertIs(cls.SNAPSHOT_NAME, snapshot.name)
+        attrs = {
+            'metadata': {
+                cls.SNAPSHOT_METADATA_KEY: cls.SNAPSHOT_METADATA_VALUE
+            }
+        }
+        snapshot_metadata = \
+            cls.conn.block_store.create_snapshot_metadata(snapshot.id, **attrs)
+        assert isinstance(snapshot_metadata, _snapshot.SnapshotMetadata)
+
         cls.SNAPSHOT_ID = snapshot.id
 
     @classmethod
     def tearDownClass(cls):
+        ret = cls.conn.block_store.delete_snapshot_metadata(
+            cls.SNAPSHOT_ID, key=cls.SNAPSHOT_METADATA_KEY, ignore_missing=False)
+        cls.assertIs(None, ret)
+
         snapshot = cls.conn.block_store.get_snapshot(cls.SNAPSHOT_ID)
         sot = cls.conn.block_store.delete_snapshot(snapshot,
                                                    ignore_missing=False)
@@ -59,6 +74,12 @@ class TestSnapshot(base.BaseFunctionalTest):
                                              interval=2,
                                              wait=120)
         cls.assertIs(None, sot)
+        volume = cls.conn.block_store.get_volume(cls.VOLUME_ID)
+        cls.conn.block_store.wait_for_status(volume,
+                                             status='available',
+                                             failures=['error'],
+                                             interval=2,
+                                             wait=120)
         sot = cls.conn.block_store.delete_volume(cls.VOLUME_ID,
                                                  ignore_missing=False)
         cls.assertIs(None, sot)
@@ -66,3 +87,72 @@ class TestSnapshot(base.BaseFunctionalTest):
     def test_get(self):
         sot = self.conn.block_store.get_snapshot(self.SNAPSHOT_ID)
         self.assertEqual(self.SNAPSHOT_NAME, sot.name)
+
+    def test_snapshots(self):
+        query = {
+            'limit': 10
+        }
+        snapshots = \
+            list(self.conn.block_store.snapshots(details=True, **query))
+        snapshot_ids = [s.id for s in snapshots]
+        self.assertTrue(self.SNAPSHOT_ID in snapshot_ids)
+
+    def test_update_snapshot(self):
+        new_name = 'snapshot new name'
+        new_desc = 'new desc'
+        attrs = {
+            'name': new_name,
+            'description': new_desc
+        }
+        snapshot = \
+            self.conn.block_store.update_snapshot(self.SNAPSHOT_ID, **attrs)
+        self.assertIsInstance(snapshot, _snapshot.Snapshot)
+        self.assertEqual(new_name, snapshot.name)
+        self.assertEqual(new_desc, snapshot.description)
+
+    def test_get_snapshot_metadata(self):
+        snapshot = \
+            self.conn.block_store.get_snapshot_metadata(self.SNAPSHOT_ID)
+        self.assertIsInstance(snapshot, _snapshot.SnapshotMetadata)
+        self.assertEqual(self.SNAPSHOT_METADATA_VALUE,
+                         snapshot.metadata[self.SNAPSHOT_METADATA_KEY])
+
+    def test_update_snapshot_metadata(self):
+        new_value = 'new value'
+        attrs = {
+            'metadata': {
+                self.SNAPSHOT_METADATA_KEY: new_value
+            }
+        }
+        metadata = self.conn.block_store.update_snapshot_metadata(
+            self.SNAPSHOT_ID, **attrs)
+        self.assertIsInstance(metadata, _snapshot.SnapshotMetadata)
+        self.assertEqual(new_value,
+                         metadata.metadata[self.SNAPSHOT_METADATA_KEY])
+
+    def test_get_snapshot_metadata_with_key(self):
+        snapshot = self.conn.block_store.get_snapshot_metadata(
+            self.SNAPSHOT_ID, key=self.SNAPSHOT_METADATA_KEY)
+        self.assertIsInstance(snapshot, _snapshot.SnapshotMetadata)
+        self.assertEqual(self.SNAPSHOT_METADATA_VALUE,
+                         snapshot.meta[self.SNAPSHOT_METADATA_KEY])
+
+    def test_update_snapshot_metadata_with_key(self):
+        new_value = 'new value'
+        attrs = {
+            'meta': {
+                self.SNAPSHOT_METADATA_KEY: new_value
+            }
+        }
+        snapshot_metadata = self.conn.block_store.update_snapshot_metadata(
+            self.SNAPSHOT_ID, key=self.SNAPSHOT_METADATA_KEY, **attrs)
+        self.assertIsInstance(snapshot_metadata, _snapshot.SnapshotMetadata)
+        self.assertEqual(new_value,
+                         snapshot_metadata.meta[self.SNAPSHOT_METADATA_KEY])
+
+    def test_rollback_snapshot(self):
+        rollback = self.conn.block_store.rollback_snapshot(self.VOLUME_ID,
+                                                           self.VOLUME_NAME,
+                                                           self.SNAPSHOT_ID)
+        self.assertIsInstance(rollback, _snapshot.SnapshotRollback)
+        self.assertEqual(self.VOLUME_ID, rollback.rollback['volume_id'])

@@ -216,7 +216,7 @@ class Proxy(proxy2.BaseProxy):
         :rtype: :class:`~openstack.block_store.v2.volume.VolumeMetadata`
         """
         res = self._get_resource(_volume.Volume, volume)
-        res_metadata = self._get_resource(_volume.VolumeMetadata, metadata)
+        res_metadata = self._get_resource(_volume.VolumeMetadata, None)
         return res_metadata.create_metadata(self._session, res.id, metadata)
 
     def update_volume_metadata(self, volume, key=None, **metadata):
@@ -235,7 +235,7 @@ class Proxy(proxy2.BaseProxy):
         :rtype: :class:`~openstack.blcok_store.v2.volume.VolumeMetadata`
         """
         res = self._get_resource(_volume.Volume, volume)
-        res_metadata = self._get_resource(_volume.VolumeMetadata, metadata)
+        res_metadata = self._get_resource(_volume.VolumeMetadata, None)
         return res_metadata.update_metadata(self._session, res.id, metadata, key)
 
     def delete_volume_metadata(self, volume, key, ignore_missing=True):
@@ -254,7 +254,7 @@ class Proxy(proxy2.BaseProxy):
         :returns: ``None``
         """
         res = self._get_resource(_volume.Volume, volume)
-        metadata = self._get_resource(_volume.VolumeMetadata, {})
+        metadata = self._get_resource(_volume.VolumeMetadata, None)
         metadata.delete_metadata(self._session, res.id, key,
                                  ignore_missing=ignore_missing)
 
@@ -270,7 +270,7 @@ class Proxy(proxy2.BaseProxy):
         :rtype: :class:`~openstack.block_store.v2.volume.VolumeMetadata`
         """
         res = self._get_resource(_volume.Volume, volume)
-        metadata = self._get_resource(_volume.VolumeMetadata, {})
+        metadata = self._get_resource(_volume.VolumeMetadata, None)
         return metadata.get_metadata(self._session, res.id, key)
 
     def set_volume_bootable(self, volume, bootable):
@@ -282,7 +282,7 @@ class Proxy(proxy2.BaseProxy):
         :param bootable: Whether to configure bootable for disk.
         """
         res = self._get_resource(_volume.Volume, volume)
-        volume_action = self._get_resource(_volume.VolumeAction, {})
+        volume_action = self._get_resource(_volume.VolumeAction, None)
         volume_action.set_bootable(self._session, res.id, bootable)
 
     def set_volume_readonly(self, volume, readonly):
@@ -294,7 +294,7 @@ class Proxy(proxy2.BaseProxy):
         :param readonly: The readonly flag of disk.
         """
         res = self._get_resource(_volume.Volume, volume)
-        volume_action = self._get_resource(_volume.VolumeAction, {})
+        volume_action = self._get_resource(_volume.VolumeAction, None)
         volume_action.set_readonly(self._session, res.id, readonly)
 
     def rollback_snapshot(self, volume_id, volume_name, snapshot_id):
@@ -307,7 +307,7 @@ class Proxy(proxy2.BaseProxy):
         :returns: The snapshot rollback information
         :rtype: :class:`~openstack.block_store.v2.snapshot.SnapshotRollback`
         """
-        snapshot_rollback = self._get_resource(_snapshot.SnapshotRollback, {})
+        snapshot_rollback = self._get_resource(_snapshot.SnapshotRollback, None)
         json = {
             'rollback': {
                 'name': volume_name,
@@ -329,7 +329,7 @@ class Proxy(proxy2.BaseProxy):
         :returns: The updated snapshot
         :rtype: :class:`openstack.block_store.v2.snapshot.Snapshot`
         """
-        return self._update(_snapshot.Snapshot, snapshot, prepend_key=False, **attrs)
+        return self._update(_snapshot.Snapshot, snapshot, **attrs)
 
     def create_snapshot_metadata(self, snapshot, **metadata):
         """Adding metadata of an EVS snapshot
@@ -346,7 +346,7 @@ class Proxy(proxy2.BaseProxy):
         :rtype: :class:`~openstack.block_store.v2.snapshot.SnapshotMetadata`
         """
         res = self._get_resource(_snapshot.Snapshot, snapshot)
-        res_metadata = self._get_resource(_snapshot.SnapshotMetadata, metadata)
+        res_metadata = self._get_resource(_snapshot.SnapshotMetadata, None)
         return res_metadata.create_metadata(self._session, res.id, metadata)
 
     def update_snapshot_metadata(self, snapshot, key=None, **metadata):
@@ -365,7 +365,7 @@ class Proxy(proxy2.BaseProxy):
         :rtype: :class:`~openstack.blcok_store.v2.snapshot.SnapshotMetadata`
         """
         res = self._get_resource(_snapshot.Snapshot, snapshot)
-        res_metadata = self._get_resource(_snapshot.SnapshotMetadata, metadata)
+        res_metadata = self._get_resource(_snapshot.SnapshotMetadata, None)
         return res_metadata.update_metadata(self._session, res.id, metadata, key)
 
     def delete_snapshot_metadata(self, snapshot, key, ignore_missing=True):
@@ -384,7 +384,7 @@ class Proxy(proxy2.BaseProxy):
         :returns: ``None``
         """
         res = self._get_resource(_snapshot.Snapshot, snapshot)
-        metadata = self._get_resource(_snapshot.SnapshotMetadata, {})
+        metadata = self._get_resource(_snapshot.SnapshotMetadata, None)
         metadata.delete_metadata(self._session, res.id, key,
                                  ignore_missing=ignore_missing)
 
@@ -400,7 +400,7 @@ class Proxy(proxy2.BaseProxy):
         :rtype: :class:`~openstack.block_store.v2.snapshot.SnapshotMetadata`
         """
         res = self._get_resource(_snapshot.Snapshot, snapshot)
-        metadata = self._get_resource(_snapshot.SnapshotMetadata, {})
+        metadata = self._get_resource(_snapshot.SnapshotMetadata, None)
         return metadata.get_metadata(self._session, res.id, key)
 
     def extensions(self):

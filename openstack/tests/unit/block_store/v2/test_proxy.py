@@ -313,7 +313,9 @@ class TestVolumeProxy2(BaseProxyTestCase):
         self.mock_response_json_file_values('snapshot_update.json')
         snapshot = self.proxy.update_snapshot(snapshot_id, **attrs)
         self.assert_session_put_with('snapshots/{0}'.format(snapshot_id),
-                                     json=attrs)
+                                     json={
+                                         'snapshot': attrs
+                                     })
         self.assertEqual(attrs['name'], snapshot.name)
         self.assertEqual(attrs['description'], snapshot.description)
         self.assertEqual('5aa119a8-d25b-45a7-8d1b-88e127885635', snapshot.volume_id)
