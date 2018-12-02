@@ -83,6 +83,11 @@ class TestSnapshot(base.BaseFunctionalTest):
         cls.assertIs(None, ret)
 
         snapshot = cls.conn.block_store.get_snapshot(cls.SNAPSHOT_ID)
+        cls.conn.block_store.wait_for_status(snapshot,
+                                             status='available',
+                                             failures=['error'],
+                                             interval=2,
+                                             wait=120)
         sot = cls.conn.block_store.delete_snapshot(snapshot,
                                                    ignore_missing=False)
         cls.conn.block_store.wait_for_delete(snapshot,
