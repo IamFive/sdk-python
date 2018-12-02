@@ -190,7 +190,7 @@ class Proxy(proxy2.BaseProxy):
         """
         self._delete(_volume.Volume, volume, ignore_missing=ignore_missing)
 
-    def os_quota_set(self, tenant_id):
+    def get_quota_set(self, tenant_id):
         """Querying details of tenant quotas
 
         :param tenant_id: tenant id

@@ -51,9 +51,9 @@ class TestVolume(base.BaseFunctionalTest):
         sot = self.conn.block_store.get_volume(self.VOLUME_ID)
         self.assertEqual(self.VOLUME_NAME, sot.name)
 
-    def test_os_quota_set(self):
+    def test_get_quota_set(self):
         tenant_id = self.conn.session.auth._project_id
-        quota_set = self.conn.block_store.os_quota_set(tenant_id)
+        quota_set = self.conn.block_store.get_quota_set(tenant_id)
         self.assertIsInstance(quota_set, _volume.QuotaSet)
         self.assertEqual(tenant_id, quota_set.tenant_id)
 

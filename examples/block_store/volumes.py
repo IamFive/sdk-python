@@ -28,9 +28,9 @@
 import logging
 
 
-def os_quota_set(conn):
+def get_quota_set(conn):
     tenant_id = 'some-tenant-id'
-    quota_set = conn.block_store.os_quota_set(tenant_id)
+    quota_set = conn.block_store.get_quota_set(tenant_id)
     for qs in quota_set:
         logging.info(qs)
 

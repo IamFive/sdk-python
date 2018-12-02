@@ -98,9 +98,9 @@ class TestVolumeProxy2(BaseProxyTestCase):
             service_class=block_store_service.BlockStoreService,
             **kwargs)
 
-    def test_os_quota_set(self):
+    def test_get_quota_set(self):
         self.mock_response_json_file_values('os_quota_set.json')
-        quota_set = self.proxy.os_quota_set('tenant-id')
+        quota_set = self.proxy.get_quota_set('tenant-id')
         self.assert_session_get_with('/os-quota-sets/tenant-id?usage=True')
 
         self.assertIsInstance(quota_set, volume.QuotaSet)
