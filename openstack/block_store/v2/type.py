@@ -50,7 +50,7 @@ class Type(resource2.Resource):
     extra_specs = resource2.Body("extra_specs", type=dict)
     #: Description of the type.
     description = resource2.Body('description')
-    #: The quality of service ID of the EVS disk type.
+    #: The quality of service ID of the block_store disk type.
     qos_specs_id = resource2.Body('qos_specs_id')
-    #: Whether the EVS disk type is public.
+    #: Whether the block_store disk type is public.
     is_public = resource2.Body('is_public', type=bool)

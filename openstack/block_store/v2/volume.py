@@ -93,14 +93,14 @@ class Volume(resource2.Resource):
 
     #: The project ID associated with current back-end.
     project_id = resource2.Body("os-vol-tenant-attr:tenant_id")
-    #: The metadata of the EVS disk image.
+    #: The metadata of the block_store disk image.
     volume_image_metadata = resource2.Body('volume_image_metadata', type=dict)
     #: The volume's current back-end.
     host = resource2.Body("os-vol-host-attr:host")
     #: ``True`` if this volume is encrypted, ``False`` if not.
     #: *Type: bool*
     is_encrypted = resource2.Body("encrypted", type=format.BoolStr)
-    #: The time when the EVS disk information was updated.
+    #: The time when the block_store disk information was updated.
     updated_at = resource2.Body('updated_at')
     #: Extended replication status on this volume.
     extended_replication_status = resource2.Body(
@@ -114,11 +114,11 @@ class Volume(resource2.Resource):
     consistency_group_id = resource2.Body("consistencygroup_id")
     #: The volume ID that this volume's name on the back-end is based on.
     migration_id = resource2.Body("os-vol-mig-status-attr:name_id")
-    #: Whether the EVS disk is shareable.
+    #: Whether the block_store disk is shareable.
     shareable = resource2.Body('shareable', type=bool)
     #: Reserved.
     user_id = resource2.Body('user_id')
-    #: The shared EVS disk information.
+    #: The shared block_store disk information.
     multi_attach = resource2.Body('multiattach', type=bool)
 
 
@@ -162,13 +162,13 @@ class QuotaSet(resource2.Resource):
     tenant_id = resource2.URI('tenant_id')
 
     #: Properties
-    #: The number of EVS disksevs_service
+    #: The number of block_store disks
     volumes = resource2.Body('volumes', type=dict)
     #: The number of snapshots
     snapshots = resource2.Body('snapshots', type=dict)
-    #: The total size (GB) of EVS disks and snapshots allowed by the quota
+    #: The total size (GB) of block_store disks and snapshots allowed by the quota
     gigabytes = resource2.Body('gigabytes', type=dict)
-    #: The number of EVS disks reserved for a specified volume type
+    #: The number of block_store disks reserved for a specified volume type
     volumes_sata = resource2.Body('volumes_SATA', type=dict)
     volumes_ssd = resource2.Body('volumes_SSD', type=dict)
     volumes_sas = resource2.Body('volumes_SAS', type=dict)
@@ -199,7 +199,7 @@ class VolumeMetadata(resource2.Resource):
     allow_create = True
 
     # properties
-    #: EVS disk metadata
+    #: block_store disk metadata
     meta = resource2.Body('meta', type=dict)
     metadata = resource2.Body('metadata', type=dict)
 

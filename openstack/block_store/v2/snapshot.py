@@ -84,7 +84,7 @@ class SnapshotDetail(Snapshot):
     #: The project ID this snapshot is associated with.
     project_id = resource2.Body("os-extended-snapshot-attributes:project_id")
 
-    #: The time when the EVS snapshot was updated.
+    #: The time when the block_store snapshot was updated.
     update_at = resource2.Body('update_at')
 
 

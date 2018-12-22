@@ -217,7 +217,7 @@ class Proxy(proxy2.BaseProxy):
         return self._get(_volume.QuotaSet, None, False, tenant_id=tenant_id)
 
     def create_volume_metadata(self, volume, **metadata):
-        """Adding metadata of an EVS disk
+        """Adding metadata of an block_store disk
 
         :param volume: The value can be the ID of a volume
                        or a :class:`~openstack.block_store.v2.volume.Volume`
@@ -227,7 +227,7 @@ class Proxy(proxy2.BaseProxy):
                            comprised of the properties on the VolumeMetadata
                            class.
 
-        :returns: the metadata of an EVS disk
+        :returns: the metadata of an block_store disk
         :rtype: :class:`~openstack.block_store.v2.volume.VolumeMetadata`
         """
         res = self._get_resource(_volume.Volume, volume)
@@ -235,7 +235,7 @@ class Proxy(proxy2.BaseProxy):
         return res_metadata.create_metadata(self._session, res.id, metadata)
 
     def update_volume_metadata(self, volume, key=None, **metadata):
-        """Updating metadata of an EVS disk
+        """Updating metadata of an block_store disk
 
         :param volume: The value can be the ID of a volume
                        or a :class:`~openstack.block_store.v2.volume.Volume`
@@ -246,7 +246,7 @@ class Proxy(proxy2.BaseProxy):
                            comprised of the properties on the VolumeMetadata
                            class.
 
-        :returns: the metadata of an EVS disk
+        :returns: the metadata of an block_store disk
         :rtype: :class:`~openstack.blcok_store.v2.volume.VolumeMetadata`
         """
         res = self._get_resource(_volume.Volume, volume)
@@ -254,7 +254,7 @@ class Proxy(proxy2.BaseProxy):
         return res_metadata.update_metadata(self._session, res.id, metadata, key)
 
     def delete_volume_metadata(self, volume, key, ignore_missing=True):
-        """Deleting one piece of EVS disk metadata
+        """Deleting one piece of block_store disk metadata
 
         :param volume: The value can be the ID of a volume
                        or a :class:`~openstack.block_store.v2.volume.Volume`
@@ -274,14 +274,14 @@ class Proxy(proxy2.BaseProxy):
                                  ignore_missing=ignore_missing)
 
     def get_volume_metadata(self, volume, key=None):
-        """Querying EVS disk metadata
+        """Querying block_store disk metadata
 
         :param volume: The value can be the ID of a volume
                        or a :class:`~openstack.block_store.v2.volume.Volume`
                        instance.
         :param key: The key of the metadata to be queried.
 
-        :returns: The metadata of an EVS disk.
+        :returns: The metadata of an block_store disk.
         :rtype: :class:`~openstack.block_store.v2.volume.VolumeMetadata`
         """
         res = self._get_resource(_volume.Volume, volume)
@@ -289,7 +289,7 @@ class Proxy(proxy2.BaseProxy):
         return metadata.get_metadata(self._session, res.id, key)
 
     def set_volume_bootable(self, volume, bootable):
-        """Configuring bootable for an EVS disk
+        """Configuring bootable for an block_store disk
 
         :param volume: The value can be the ID of a volume
                        or a :class:`~openstack.block_store.v2.volume.Volume`
@@ -301,7 +301,7 @@ class Proxy(proxy2.BaseProxy):
         volume_action.set_bootable(self._session, res.id, bootable)
 
     def set_volume_readonly(self, volume, readonly):
-        """Configuring Read-Only attribute for an EVS disk
+        """Configuring Read-Only attribute for an block_store disk
 
         :param volume: The value can be the ID of a volume
                        or a :class:`~openstack.block_store.v2.volume.Volume`
@@ -313,10 +313,10 @@ class Proxy(proxy2.BaseProxy):
         volume_action.set_readonly(self._session, res.id, readonly)
 
     def rollback_snapshot(self, volume_id, volume_name, snapshot_id):
-        """Rolling back a snapshot to an EVS disk
+        """Rolling back a snapshot to an block_store disk
 
-        :param volume_id: The ID of the EVS disk which needs rollback.
-        :param volume_name: The name of the EVS disk which needs rollback.
+        :param volume_id: The ID of the block_store disk which needs rollback.
+        :param volume_name: The name of the block_store disk which needs rollback.
         :param snapshot_id: The ID of the snapshot which needs rollback.
 
         :returns: The snapshot rollback information
@@ -332,7 +332,7 @@ class Proxy(proxy2.BaseProxy):
         return snapshot_rollback.rollback_snapshot(self._session, snapshot_id, **json)
 
     def update_snapshot(self, snapshot, **attrs):
-        """Updating an EVS snapshot
+        """Updating an block_store snapshot
 
         :param snapshot: The value can be the ID of a snapshot
                 or a :class: `~openstack.block_store.v2.snapshot.Snapshot`
@@ -347,7 +347,7 @@ class Proxy(proxy2.BaseProxy):
         return self._update(_snapshot.Snapshot, snapshot, **attrs)
 
     def create_snapshot_metadata(self, snapshot, **metadata):
-        """Adding metadata of an EVS snapshot
+        """Adding metadata of an block_store snapshot
 
         :param snapshot: The value can be the ID of a snapshot
                        or a :class:`~openstack.block_store.v2.snapshot.Snapshot`
@@ -357,7 +357,7 @@ class Proxy(proxy2.BaseProxy):
                            comprised of the properties on the SnapshotMetadata
                            class.
 
-        :returns: the metadata of an EVS snapshot
+        :returns: the metadata of an block_store snapshot
         :rtype: :class:`~openstack.block_store.v2.snapshot.SnapshotMetadata`
         """
         res = self._get_resource(_snapshot.Snapshot, snapshot)
@@ -365,7 +365,7 @@ class Proxy(proxy2.BaseProxy):
         return res_metadata.create_metadata(self._session, res.id, metadata)
 
     def update_snapshot_metadata(self, snapshot, key=None, **metadata):
-        """Updating metadata of an EVS snapshot
+        """Updating metadata of an block_store snapshot
 
         :param snapshot: The value can be the ID of a snapshot
                        or a :class:`~openstack.block_store.v2.snapshot.Snapshot`
@@ -376,7 +376,7 @@ class Proxy(proxy2.BaseProxy):
                            comprised of the properties on the SnapshotMetadata
                            class.
 
-        :returns: The metadata of an EVS snapshot
+        :returns: The metadata of an block_store snapshot
         :rtype: :class:`~openstack.blcok_store.v2.snapshot.SnapshotMetadata`
         """
         res = self._get_resource(_snapshot.Snapshot, snapshot)
@@ -384,7 +384,7 @@ class Proxy(proxy2.BaseProxy):
         return res_metadata.update_metadata(self._session, res.id, metadata, key)
 
     def delete_snapshot_metadata(self, snapshot, key, ignore_missing=True):
-        """Deleting one piece of EVS disk snapshot metadata
+        """Deleting one piece of block_store disk snapshot metadata
 
         :param snapshot: The value can be the ID of a snapshot
                        or a :class:`~openstack.block_store.v2.snapshot.Snapshot`
@@ -404,14 +404,14 @@ class Proxy(proxy2.BaseProxy):
                                  ignore_missing=ignore_missing)
 
     def get_snapshot_metadata(self, snapshot, key=None):
-        """Querying EVS snapshot metadata
+        """Querying block_store snapshot metadata
 
         :param snapshot: The value can be the ID of a snapshot
                        or a :class:`~openstack.block_store.v2.snapshot.Snapshot`
                        instance.
         :param key: The key of the metadata to be queried.
 
-        :returns: The metadata of an EVS snapshot
+        :returns: The metadata of an block_store snapshot
         :rtype: :class:`~openstack.block_store.v2.snapshot.SnapshotMetadata`
         """
         res = self._get_resource(_snapshot.Snapshot, snapshot)
